@@ -1,16 +1,392 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import { getCollection } from 'astro:content';
 
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+// Get content collections
+const allMembers = await getCollection('members');
+const coreMembers = allMembers.filter(member => member.data.isCore && member.id.startsWith(lang + '-'));
+
+const allEvents = await getCollection('events');
+const recentEvents = allEvents
+  .filter(event => event.id.startsWith(lang + '-'))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title={t('site.title')} description={t('site.description')} lang={lang}>
+  <Header />
+  
+  <!-- Hero Section -->
+  <section class="hero-section w-full min-h-[600px] flex items-center">
+    <div class="container mx-auto px-4 py-20">
+      <div class="max-w-2xl">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          {t('hero.title')}
+        </h1>
+        <p class="text-xl md:text-2xl text-gray-700 mb-8 whitespace-pre-line">
+          {t('hero.subtitle')}
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a href="#about" class="bg-primary text-white px-6 py-3 rounded-lg whitespace-nowrap hover:bg-opacity-90 transition">
+            {t('hero.cta.learn')}
+          </a>
+          <a href="/members" class="bg-white border border-primary text-primary px-6 py-3 rounded-lg whitespace-nowrap hover:bg-gray-50 transition">
+            {t('hero.cta.members')}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">{t('about.title')}</h2>
+        <p class="text-lg text-gray-600 max-w-3xl mx-auto">{t('about.description')}</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div class="bg-gray-50 p-8 rounded-lg shadow-sm hover:shadow-md transition">
+          <div class="w-16 h-16 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mb-6">
+            <i class="ri-team-line ri-xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-semibold mb-4">
+            {lang === 'ja' ? '協働の精神' : 'Collaborative Spirit'}
+          </h3>
+          <p class="text-gray-600">
+            {lang === 'ja' 
+              ? '「競合」ではなく「協働」を重視し、小さな世界で戦うのではなく、大きなパイを外からも取りに行く姿勢を大切にしています。' 
+              : 'We value "collaboration" over "competition", focusing on expanding opportunities rather than fighting over a small market.'
+            }
+          </p>
+        </div>
+        
+        <div class="bg-gray-50 p-8 rounded-lg shadow-sm hover:shadow-md transition">
+          <div class="w-16 h-16 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mb-6">
+            <i class="ri-arrow-up-circle-line ri-xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-semibold mb-4">
+            {lang === 'ja' ? 'スキルアップ' : 'Skill Development'}
+          </h3>
+          <p class="text-gray-600">
+            {lang === 'ja' 
+              ? '変化に適応し続ける力を育むため、共に学び、アップデートする仲間との関係性を大切にしています。' 
+              : 'We cherish relationships with colleagues who learn and update together to cultivate the ability to continuously adapt to change.'
+            }
+          </p>
+        </div>
+        
+        <div class="bg-gray-50 p-8 rounded-lg shadow-sm hover:shadow-md transition">
+          <div class="w-16 h-16 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mb-6">
+            <i class="ri-heart-line ri-xl text-primary"></i>
+          </div>
+          <h3 class="text-xl font-semibold mb-4">
+            {lang === 'ja' ? 'QOL向上' : 'QOL Enhancement'}
+          </h3>
+          <p class="text-gray-600">
+            {lang === 'ja' 
+              ? '日向市という場所で暮らし働く意味を感じ、生活の質を高めることを目指しています。' 
+              : 'We aim to improve quality of life by finding meaning in living and working in Hyuga City.'
+            }
+          </p>
+        </div>
+      </div>
+      
+      <div class="flex flex-col md:flex-row gap-12 items-center">
+        <div class="md:w-1/2">
+          <img 
+            src="https://readdy.ai/api/search-image?query=A%20professional%20meeting%20of%20diverse%20digital%20professionals%20in%20a%20modern%20coworking%20space%20with%20ocean%20view%20in%20Hyuga%2C%20Japan.%20People%20are%20collaborating%20on%20laptops%2C%20discussing%20projects%2C%20with%20a%20warm%20and%20inviting%20atmosphere.%20Natural%20lighting%2C%20modern%20interior%20with%20Japanese%20elements.&width=600&height=400&seq=about1&orientation=landscape" 
+            alt={lang === 'ja' ? '日向デジタル・コレクティブの活動' : 'HUGA Digital Collective Activities'} 
+            class="rounded-lg shadow-md w-full h-auto object-cover"
+          >
+        </div>
+        <div class="md:w-1/2">
+          <h3 class="text-2xl font-bold mb-6">
+            {lang === 'ja' ? '私たちのビジョン' : 'Our Vision'}
+          </h3>
+          {lang === 'ja' ? (
+            <>
+              <p class="text-gray-600 mb-6">HYUGA BASEを中心に集う利用者の多くは、都市部からの移住者やUターン者、または地域に根ざした個人事業者であり、Web制作、EC構築、SNSプロデュース、動画制作、業務アプリ開発など多様なスキルを有しています。</p>
+              <p class="text-gray-600 mb-6">一方、日向市は小規模な地方都市であり、地域内の産業構造・案件量には限界があります。都市部で培った知見を活かすには、地域内だけではなく、外部とつながる必要があります。</p>
+              <p class="text-gray-600">私たちは、地方の一拠点から、新しい働き方と暮らし方のモデルを発信していきます。一人では限界があっても、仲間となら前に進めると信じています。</p>
+            </>
+          ) : (
+            <>
+              <p class="text-gray-600 mb-6">Many of the users gathering around HYUGA BASE are migrants from urban areas, U-turn returnees, or locally-rooted individual business owners with diverse skills including web development, e-commerce construction, SNS production, video production, and business app development.</p>
+              <p class="text-gray-600 mb-6">On the other hand, Hyuga City is a small regional city with limitations in local industrial structure and project volume. To leverage knowledge gained in urban areas, we need to connect not just within the region but also externally.</p>
+              <p class="text-gray-600">We will disseminate new models of working and living from a single rural base. We believe that while there are limits to what one person can do alone, we can move forward together with colleagues.</p>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Members Section -->
+  <section id="members" class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">{t('members.title')}</h2>
+        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+          {lang === 'ja' 
+            ? '多様なスキルと経験を持つプロフェッショナルが集まり、協力して活動しています。' 
+            : 'Professionals with diverse skills and experience come together to work collaboratively.'
+          }
+        </p>
+      </div>
+      
+      <div class="mb-10">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+          <h3 class="text-2xl font-bold">
+            {lang === 'ja' ? 'コアメンバー' : 'Core Members'}
+          </h3>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {coreMembers.map((member) => (
+            <div class="bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition">
+              <div class="h-60 overflow-hidden">
+                <img 
+                  src={member.data.image} 
+                  alt={member.data.name} 
+                  class="w-full h-full object-cover object-top"
+                >
+              </div>
+              <div class="p-6">
+                <h4 class="text-xl font-semibold mb-2">{member.data.name}</h4>
+                <p class="text-primary font-medium mb-3">{member.data.role}</p>
+                <p class="text-gray-600 mb-4">{member.data.description}</p>
+                {member.data.social && (
+                  <div class="flex space-x-2">
+                    {member.data.social.linkedin && (
+                      <a href={member.data.social.linkedin} class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-gray-700 hover:bg-primary hover:text-white transition">
+                        <i class="ri-linkedin-fill"></i>
+                      </a>
+                    )}
+                    {member.data.social.github && (
+                      <a href={member.data.social.github} class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-gray-700 hover:bg-primary hover:text-white transition">
+                        <i class="ri-github-fill"></i>
+                      </a>
+                    )}
+                    {member.data.social.website && (
+                      <a href={member.data.social.website} class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-gray-700 hover:bg-primary hover:text-white transition">
+                        <i class="ri-global-line"></i>
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      <div class="text-center">
+        <a href="/members" class="inline-block bg-white border border-primary text-primary px-8 py-4 rounded-lg whitespace-nowrap hover:bg-gray-50 transition">
+          {lang === 'ja' ? '全メンバーを見る' : 'View All Members'}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Events Section -->
+  <section class="py-20 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">{t('events.title')}</h2>
+        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+          {lang === 'ja' 
+            ? '最新の活動報告や今後のイベント情報をお知らせします。' 
+            : 'We share the latest activity reports and upcoming event information.'
+          }
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        {recentEvents.map((event) => (
+          <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition">
+            <div class="h-48 overflow-hidden">
+              <img 
+                src={event.data.thumbnail} 
+                alt={event.data.title} 
+                class="w-full h-full object-cover"
+              >
+            </div>
+            <div class="p-6">
+              <div class="flex items-center text-sm text-gray-500 mb-3">
+                <span class="w-5 h-5 flex items-center justify-center mr-2">
+                  <i class="ri-calendar-line"></i>
+                </span>
+                {event.data.date.toLocaleDateString(lang === 'ja' ? 'ja-JP' : 'en-US')}
+              </div>
+              <h4 class="text-xl font-semibold mb-3">{event.data.title}</h4>
+              <p class="text-gray-600 mb-4">{event.data.description}</p>
+              <a href={`/events/${event.slug}`} class="text-primary font-medium hover:underline flex items-center">
+                {lang === 'ja' ? '詳細を見る' : 'Learn More'}
+                <span class="w-5 h-5 flex items-center justify-center ml-1">
+                  <i class="ri-arrow-right-line"></i>
+                </span>
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      <div class="text-center">
+        <a href="/events" class="inline-block bg-white border border-primary text-primary px-8 py-4 rounded-lg whitespace-nowrap hover:bg-gray-50 transition">
+          {lang === 'ja' ? 'すべてのニュースを見る' : 'View All News'}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">{t('contact.title')}</h2>
+        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+          {lang === 'ja' 
+            ? 'ご質問やお問い合わせ、参加希望の方はこちらからご連絡ください。' 
+            : 'Please contact us with any questions, inquiries, or if you would like to participate.'
+          }
+        </p>
+      </div>
+      
+      <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition">
+          <div class="w-12 h-12 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mb-4 mx-auto">
+            <i class="ri-mail-line ri-lg text-primary"></i>
+          </div>
+          <h3 class="text-lg font-semibold text-center mb-2">
+            {lang === 'ja' ? 'メール' : 'Email'}
+          </h3>
+          <p class="text-gray-600 text-center">info@huga-digital.jp</p>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition">
+          <div class="w-12 h-12 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mb-4 mx-auto">
+            <i class="ri-map-pin-line ri-lg text-primary"></i>
+          </div>
+          <h3 class="text-lg font-semibold text-center mb-2">
+            {lang === 'ja' ? '所在地' : 'Location'}
+          </h3>
+          <p class="text-gray-600 text-center">
+            {lang === 'ja' ? '宮崎県日向市 HYUGA BASE内' : 'HYUGA BASE, Hyuga City, Miyazaki'}
+          </p>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition">
+          <div class="w-12 h-12 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mb-4 mx-auto">
+            <i class="ri-instagram-line ri-lg text-primary"></i>
+          </div>
+          <h3 class="text-lg font-semibold text-center mb-2">SNS</h3>
+          <div class="flex justify-center space-x-4">
+            <a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-gray-700 hover:bg-primary hover:text-white transition">
+              <i class="ri-instagram-line"></i>
+            </a>
+            <a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-gray-700 hover:bg-primary hover:text-white transition">
+              <i class="ri-twitter-x-line"></i>
+            </a>
+            <a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-gray-700 hover:bg-primary hover:text-white transition">
+              <i class="ri-facebook-fill"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 bg-opacity-95 text-white py-12" style="background-image: linear-gradient(to bottom, rgba(30, 41, 59, 0.98), rgba(30, 41, 59, 0.98)), url('https://readdy.ai/api/search-image?query=Abstract%20digital%20wave%20pattern%20with%20subtle%20blue%20tones%2C%20minimalist%20tech%20design%20elements%20mixed%20with%20organic%20wave%20forms%2C%20modern%20and%20clean%20aesthetic&width=1920&height=1080&seq=footer1&orientation=landscape'); background-size: cover; background-position: center;">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div>
+          <a href="/" class="flex items-center mb-4">
+            <span class="text-2xl font-['Pacifico'] text-white">HUGA</span>
+            <span class="ml-2 text-sm font-semibold text-gray-300">DIGITAL COLLECTIVE</span>
+          </a>
+          <p class="text-gray-400 mb-4">{t('footer.description')}</p>
+          <div class="flex space-x-4">
+            <a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-primary hover:text-white transition">
+              <i class="ri-instagram-line"></i>
+            </a>
+            <a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-primary hover:text-white transition">
+              <i class="ri-twitter-x-line"></i>
+            </a>
+            <a href="#" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-primary hover:text-white transition">
+              <i class="ri-facebook-fill"></i>
+            </a>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold mb-4">
+            {lang === 'ja' ? 'リンク' : 'Links'}
+          </h4>
+          <ul class="space-y-2">
+            <li><a href="/" class="text-gray-400 hover:text-white transition">{t('nav.home')}</a></li>
+            <li><a href="#about" class="text-gray-400 hover:text-white transition">{t('nav.about')}</a></li>
+            <li><a href="/members" class="text-gray-400 hover:text-white transition">{t('nav.members')}</a></li>
+            <li><a href="#activities" class="text-gray-400 hover:text-white transition">{t('nav.activities')}</a></li>
+            <li><a href="#contact" class="text-gray-400 hover:text-white transition">{t('nav.contact')}</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold mb-4">
+            {lang === 'ja' ? '活動' : 'Activities'}
+          </h4>
+          <ul class="space-y-2">
+            <li><a href="/events" class="text-gray-400 hover:text-white transition">
+              {lang === 'ja' ? 'イベント情報' : 'Event Information'}
+            </a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition">
+              {lang === 'ja' ? '勉強会' : 'Study Groups'}
+            </a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition">
+              {lang === 'ja' ? 'プロジェクト' : 'Projects'}
+            </a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold mb-4">
+            {lang === 'ja' ? 'ニュースレター' : 'Newsletter'}
+          </h4>
+          <p class="text-gray-400 mb-4">
+            {lang === 'ja' ? '最新情報をメールでお届けします。' : 'We deliver the latest information by email.'}
+          </p>
+          <form class="flex">
+            <input 
+              type="email" 
+              placeholder={lang === 'ja' ? 'メールアドレス' : 'Email Address'} 
+              class="px-4 py-2 bg-gray-800 text-white border-none rounded-l focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+            <button type="submit" class="bg-primary text-white px-4 py-2 rounded-r whitespace-nowrap hover:bg-opacity-90 transition">
+              {lang === 'ja' ? '登録' : 'Subscribe'}
+            </button>
+          </form>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <p class="text-gray-400 text-sm mb-4 md:mb-0">© 2025 HUGA DIGITAL COLLECTIVE. All rights reserved.</p>
+        <div class="flex space-x-6">
+          <a href="#" class="text-gray-400 text-sm hover:text-white transition">
+            {lang === 'ja' ? 'プライバシーポリシー' : 'Privacy Policy'}
+          </a>
+          <a href="#" class="text-gray-400 text-sm hover:text-white transition">
+            {lang === 'ja' ? '利用規約' : 'Terms of Service'}
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</BaseLayout>

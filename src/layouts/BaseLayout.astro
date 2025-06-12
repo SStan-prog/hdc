@@ -1,0 +1,167 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+interface Props {
+  title: string;
+  description?: string;
+  lang?: string;
+}
+
+const { title, description = '', lang } = Astro.props;
+const currentLang = lang || getLangFromUrl(Astro.url);
+const t = useTranslations(currentLang);
+---
+
+<!DOCTYPE html>
+<html lang={currentLang}>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  
+  <style>
+    :where([class^="ri-"])::before { content: "\f3c2"; }
+    
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+    }
+    
+    .hero-section {
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 40%, rgba(255, 255, 255, 0) 100%), url('https://readdy.ai/api/search-image?query=Stunning%20coastal%20view%20of%20Hyuga%20city%2C%20Japan%2C%20with%20modern%20digital%20elements%20seamlessly%20integrated.%20A%20person%20working%20on%20laptop%20in%20a%20modern%20workspace%20with%20ocean%20views.%20Soft%20morning%20light%2C%20calm%20waves%2C%20modern%20architecture%20meets%20traditional%20Japanese%20elements.%20Clean%2C%20minimalist%20aesthetic%20with%20focus%20on%20work-life%20balance%20by%20the%20sea.&width=1920&height=1080&seq=hero2&orientation=landscape');
+      background-size: cover;
+      background-position: center;
+    }
+    
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    
+    .nav-link {
+      position: relative;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -2px;
+      left: 0;
+      background-color: #624966;
+      transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+    
+    .custom-switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 24px;
+    }
+    
+    .custom-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background-color: #624966;
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <slot />
+  
+  <script>
+    // Mobile menu functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const mobileMenuButton = document.getElementById('mobile-menu-button');
+      const mobileMenu = document.getElementById('mobile-menu');
+      
+      if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', function() {
+          mobileMenu.classList.toggle('hidden');
+          if (mobileMenu.classList.contains('hidden')) {
+            mobileMenuButton.innerHTML = '<i class="ri-menu-line ri-lg"></i>';
+          } else {
+            mobileMenuButton.innerHTML = '<i class="ri-close-line ri-lg"></i>';
+          }
+        });
+      }
+      
+      // Smooth scroll functionality
+      const links = document.querySelectorAll('a[href^="#"]');
+      for (const link of links) {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const targetId = this.getAttribute('href');
+          if (targetId === '#') return;
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            const offsetTop = targetElement.getBoundingClientRect().top + window.pageYOffset;
+            window.scrollTo({
+              top: offsetTop,
+              behavior: 'smooth'
+            });
+            
+            // Close mobile menu if open
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+              mobileMenu.classList.add('hidden');
+              mobileMenuButton.innerHTML = '<i class="ri-menu-line ri-lg"></i>';
+            }
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
