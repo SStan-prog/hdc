@@ -1,0 +1,58 @@
+---
+import { getLangFromUrl, useTranslations, pathWithLang } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<header class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+    <a href={pathWithLang(lang)} class="flex items-center">
+      <img src="/logo.svg" alt="HUGA DIGITAL COLLECTIVE" class="h-10 w-auto">
+    </a>
+    
+    <nav class="hidden md:flex space-x-8">
+      <a href={pathWithLang(lang)} class="nav-link active text-primary font-medium">{t('nav.home')}</a>
+      <a href={pathWithLang(lang, '#about')} class="nav-link text-gray-700 hover:text-primary transition">{t('nav.about')}</a>
+      <a href={pathWithLang(lang, 'members')} class="nav-link text-gray-700 hover:text-primary transition">{t('nav.members')}</a>
+      <a href={pathWithLang(lang, '#activities')} class="nav-link text-gray-700 hover:text-primary transition">{t('nav.activities')}</a>
+      <a href={pathWithLang(lang, 'events')} class="nav-link text-gray-700 hover:text-primary transition">{t('nav.events')}</a>
+      <a href={pathWithLang(lang, '#contact')} class="nav-link text-gray-700 hover:text-primary transition">{t('nav.contact')}</a>
+    </nav>
+    
+    <div class="flex items-center space-x-4">
+      <!-- Language Toggle -->
+      <div class="flex items-center space-x-2">
+        <a 
+          href={lang === 'ja' ? '/en' : '/'} 
+          class="text-sm px-3 py-1 rounded-full border border-gray-300 hover:bg-gray-50 transition"
+        >
+          {lang === 'ja' ? 'EN' : 'JA'}
+        </a>
+      </div>
+      
+      <a href={pathWithLang(lang, '#contact')} class="hidden md:block bg-primary text-white px-5 py-2 rounded-lg whitespace-nowrap hover:bg-opacity-90 transition">
+        {t('nav.contact')}
+      </a>
+      
+      <button class="md:hidden w-10 h-10 flex items-center justify-center text-gray-700" id="mobile-menu-button">
+        <i class="ri-menu-line ri-lg"></i>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
+    <div class="container mx-auto px-4 py-3 space-y-3">
+      <a href={pathWithLang(lang)} class="block py-2 text-primary font-medium">{t('nav.home')}</a>
+      <a href={pathWithLang(lang, '#about')} class="block py-2 text-gray-700 hover:text-primary transition">{t('nav.about')}</a>
+      <a href={pathWithLang(lang, 'members')} class="block py-2 text-gray-700 hover:text-primary transition">{t('nav.members')}</a>
+      <a href={pathWithLang(lang, '#activities')} class="block py-2 text-gray-700 hover:text-primary transition">{t('nav.activities')}</a>
+      <a href={pathWithLang(lang, 'events')} class="block py-2 text-gray-700 hover:text-primary transition">{t('nav.events')}</a>
+      <a href={pathWithLang(lang, '#contact')} class="block py-2 text-gray-700 hover:text-primary transition">{t('nav.contact')}</a>
+      <a href={pathWithLang(lang, '#contact')} class="block w-full bg-primary text-white px-5 py-2 text-center rounded-lg whitespace-nowrap hover:bg-opacity-90 transition">
+        {t('nav.contact')}
+      </a>
+    </div>
+  </div>
+</header>
